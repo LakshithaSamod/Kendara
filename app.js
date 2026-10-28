@@ -98,20 +98,20 @@ function loadProfile() {
   catch { return { ...DEFAULT }; }
 }
 
-function query(extra) {
+function params(extra) {
   const here = PLACES.find((p) => p[0] === profile.here);
-  return new URLSearchParams({
+  return {
     name: profile.name, bdate: profile.date, btime: profile.time,
     lat: profile.lat, lon: profile.lon, tz: profile.tz, lang,
     clat: here ? here[1] : profile.lat, clon: here ? here[2] : profile.lon, ...extra,
-  }).toString();
+  };
 }
 
+// Everything is calculated right here in the browser (js/*.js) - no server needed,
+// so the page also works when index.html is opened straight from disk.
 async function api(path, extra = {}) {
-  const r = await fetch(`/api/${path}?${query(extra)}`);
-  const j = await r.json();
-  if (!r.ok) throw new Error(j.error || r.statusText);
-  return j;
+  await new Promise((r) => setTimeout(r, 20)); // let the "loading" message paint first
+  return K.reading(params(extra));
 }
 
 /* ---------------- language ---------------- */

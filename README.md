@@ -1,69 +1,68 @@
-# Kendara: web app for traditional readings
+# Kendara: Sinhala / English Jyotiṣa readings
 
-A web app that gives plain-language traditional Jyotiṣa readings (Sinhala or English) for
-**today**, **any date**, **any month** or **any year**. It is self-contained: the calculation
-engine is included in `jyotish/`.
+A web app that gives plain-language traditional Jyotiṣa readings in **Sinhala or English** for
+**today**, **any date**, **any month** or **any year**.
+
+**Just double-click `index.html`.** Everything runs inside the browser, so there's no server, no
+install and no internet needed (fonts load from Google Fonts when online; otherwise the system
+fonts are used).
 
 ## Layout
 
 ```
-index.html, style.css, app.js   the website (static files)
-api/reading.py, api/natal.py    Vercel serverless functions (the JSON API)
-jyotish/                        engine.py (Swiss Ephemeris), readings.py (traditional rules),
-                                simple.py (plain English/Sinhala text), service.py (API logic)
-server.py                       local development server (same API + static files)
-requirements.txt, vercel.json   deployment settings
+index.html, style.css, app.js   the page and its interface
+js/engine.js     astronomy: sidereal positions, Lagna, sunrise, eclipses, Vimshottari dasha
+js/readings.js   the traditional rules (gochara, tara bala, chandrashtama, dasha lords)
+js/simple.js     builds the plain reading from those rules
+js/phrases.js    every sentence of the plain reading, English + Sinhala (edit wording here)
+js/service.js    puts it all together for a given birth chart and date
+vendor/astronomy.min.js   Astronomy Engine 2.1.19 (MIT licence, by Don Cross)
 ```
-
-## Run locally
-
-```bash
-pip install -r requirements.txt
-python3 server.py
-# open http://127.0.0.1:8765
-```
-
-## Deploy on Vercel (via GitHub)
-
-1. Push this folder to a GitHub repository (this folder is the repo root).
-2. On vercel.com → **Add New… → Project** → import the repository.
-3. Framework preset: **Other**. Leave the build and output settings empty, then **Deploy**.
-
-Vercel serves `index.html` and the other static files, and runs `api/*.py` as Python
-functions. They install `pyswisseph` from `requirements.txt`. PyPI has no prebuilt pyswisseph
-package for Python 3.12+, so Vercel compiles it from source during the build (needs only a C
-compiler). If that build step ever fails, choose a Python 3.11 runtime in the project settings,
-where a prebuilt package exists.
 
 ## What each view shows
 
 | View | Contents |
 |---|---|
-| Today / A date | Day score, Moon's house and star, tara bala, tithi, sunrise/sunset, Rahu Kalam, how the day changes as the Moon changes star, do/avoid list, six life areas (love, work, money, health, mind, home), Sade Sati and other background, current Mahadasha → Antardasha → Pratyantar, transit chart, the next 30 days of sky events |
-| A month | Calendar coloured by daily score (tap a day for its full reading), brightest and gentle days, week-by-week text, life areas, ingresses/stations/Poya/new moon/eclipses |
-| A year | 12 month cards (tap for that month), the slow planets moving through your houses, Dasha changes, turning points, life areas |
+| Today / A date | What kind of day it is, best time, Rahu Kalam, sunrise/sunset, what to do and avoid, six life areas (love, work, money, health, mind, home), the bigger picture (Sade Sati, Jupiter), your current Dasha, the next 30 days |
+| A month | Calendar coloured by day (tap any day for its reading), best and gentle days, week by week, life areas, sky events |
+| A year | 12 month cards (tap for that month), the slow planets' journey through your houses, Dasha changes, life areas, turning points |
 
-**Language & style.** Readings come in **Sinhala (default) or English** (switch at the top
-right). The main reading uses plain, everyday sentences with no technical terms; the technical
-reasoning (degrees, houses, tara names, the chart grid) is under **More details**, in English.
-The plain text lives in `jyotish/simple.py`: each Sinhala message is written as its own sentence, not
-translated word by word. Nakshatra names stay in English until their Sinhala spellings are confirmed.
-
-Birth details are editable in the app and saved only in your browser.
+Readings come in **Sinhala (default) or English** (switch at the top right) and use plain,
+everyday sentences. The technical reasoning (degrees, houses, tara names, chart grid) sits
+under **More details**, in English. Nakshatra names stay in English until their Sinhala
+spellings are confirmed. Birth details can be edited in the app and are saved only in your browser.
 Sri Lanka's 1996–2006 clock changes (+6:30 / +6:00) are handled automatically.
+
+## Accuracy
+
+Method: sidereal zodiac, Lahiri ayanāṁśa, whole-sign houses, mean Rahu, Vimśottarī dasha (the
+same method as the rest of this knowledge base). Positions come from Astronomy Engine and are
+made sidereal exactly the way the Swiss Ephemeris does it, using a Lahiri curve and a ΔT table
+matched to the Swiss Ephemeris.
+
+Checked against the Swiss Ephemeris (pyswisseph 2.10, the knowledge base's reference engine)
+at 301 random moments from 1800 to 2400:
+
+| | typical difference | worst |
+|---|---|---|
+| Sun, planets, Lagna | 1–3″ (arcseconds) | 23″ |
+| Moon | 3″ | 21″ |
+| Rahu, ayanāṁśa | < 1″ | < 1″ |
+
+0 sign, 0 nakshatra and 0 retrograde mismatches in 2,408 checks. A full side-by-side run of 24
+day, month and year readings (both languages) gave identical text, scores and calendars. The only
+difference was one event clock time: a slow, near-stationary Venus sign change came out 18 minutes apart.
 
 ## Fact vs tradition
 
-* **Fact:** positions, dates, sunrise, Rahu Kalam times, eclipses, dasha periods (Swiss Ephemeris, Lahiri, whole-sign houses, Vimśottarī).
-* **Tradition:** every sentence about *meaning* is generated from classical rules in
-  `jyotish/readings.py`: gochara (transits counted from the natal Moon), tara bala, Chandrashtama,
-  house themes and dasha-lord rulerships. It is belief, not science, and never a guaranteed prediction.
-* The **score** (0–100) is this app's own summary of those traditional rules (tara + Moon
-  position + Chandrashtama + a small slow-planet term, averaged over 7 AM–7 PM). It is not a
-  standard almanac number.
+* **Fact:** positions, dates, sunrise, Rahu Kalam times, eclipses, dasha periods.
+* **Tradition:** every sentence about *meaning* comes from classical rules in `js/readings.js`.
+  It is belief, not science, and never a guaranteed prediction.
+* The **score** (0–100) is this app's own summary of those rules (tara + Moon position +
+  Chandrashtama + a small slow-planet term, averaged over 7 AM–7 PM). It is not a standard almanac number.
 
-## API
+## Put it online (optional)
 
-`GET /api/reading?mode=day|month|year&date=YYYY-MM-DD|month=YYYY-MM|year=YYYY`
-plus `lang=si|en`, birth fields `name, bdate, btime, lat, lon, tz(auto|hours)` and optional
-`clat, clon` (where you are today, for sunrise/Rahu Kalam). `GET /api/natal` returns the birth chart.
+It is a plain static site. Push this folder to GitHub, then either import the repo on
+**Vercel** (framework preset "Other", no build settings) or enable **GitHub Pages**
+(Settings → Pages → deploy from the `main` branch, root folder).
