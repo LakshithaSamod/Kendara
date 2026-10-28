@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kendara · a living almanac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gloock&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Noto+Serif+Sinhala:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="masthead">
+    <div class="moonwrap" title="Tonight's Moon">
+      <svg id="moon" viewBox="0 0 100 100" aria-hidden="true"></svg>
+    </div>
+    <div class="langswitch" role="group" aria-label="Language">
+      <button type="button" data-lang="si" class="si">සිංහල</button>
+      <button type="button" data-lang="en">English</button>
+    </div>
+    <div class="titles">
+      <p class="eyebrow"><span class="si">ජ්‍යෝතිෂ</span> · Jyotiṣa almanac</p>
+      <h1>Kendara</h1>
+      <p class="tag" data-i18n="tag">Your sky, read the traditional way.</p>
+    </div>
+  </header>
+
+  <section class="profile leaf" id="profile">
+    <div class="holes" aria-hidden="true"><i></i><i></i></div>
+    <div class="profile-main" id="profileSummary">Loading your chart…</div>
+    <button class="btn ghost" id="editBtn" aria-expanded="false" aria-controls="birthForm" data-i18n="edit">Edit birth details</button>
+    <form id="birthForm" class="birthform" hidden>
+      <label><span data-i18n="f_name">Name</span> <input name="name" autocomplete="off"></label>
+      <label><span data-i18n="f_date">Birth date</span> <input name="date" type="date" required></label>
+      <label><span data-i18n="f_time">Birth time</span> <input name="time" type="time" required></label>
+      <label><span data-i18n="f_place">Birth place</span>
+        <select name="place" id="placeSel"></select>
+      </label>
+      <label class="custom"><span data-i18n="f_lat">Latitude</span> <input name="lat" type="number" step="0.0001" min="-90" max="90"></label>
+      <label class="custom"><span data-i18n="f_lon">Longitude</span> <input name="lon" type="number" step="0.0001" min="-180" max="180"></label>
+      <label><span data-i18n="f_tz">Birth time zone</span>
+        <select name="tz">
+          <option value="auto">Auto – Sri Lanka history (+5:30 / +6:00 / +6:30)</option>
+          <option value="5.5">+5:30</option><option value="6">+6:00</option><option value="6.5">+6:30</option>
+          <option value="5">+5:00</option><option value="0">UTC</option>
+        </select>
+      </label>
+      <label><span data-i18n="f_here">Where you are today</span>
+        <select name="here" id="hereSel"></select>
+      </label>
+      <div class="formbtns">
+        <button class="btn" type="submit" data-i18n="save">Save &amp; read</button>
+        <button class="btn ghost" type="button" id="resetBtn" data-i18n="reset">Reset to default</button>
+      </div>
+      <p class="fine" data-i18n="fine">Saved only in this browser.</p>
+    </form>
+  </section>
+
+  <nav class="modes" role="tablist" aria-label="Reading type">
+    <button role="tab" data-mode="today" aria-selected="true" data-i18n="t_today">Today</button>
+    <button role="tab" data-mode="day" aria-selected="false" data-i18n="t_day">A date</button>
+    <button role="tab" data-mode="month" aria-selected="false" data-i18n="t_month">A month</button>
+    <button role="tab" data-mode="year" aria-selected="false" data-i18n="t_year">A year</button>
+    <div class="picker" id="picker"></div>
+  </nav>
+
+  <main id="out" aria-live="polite"></main>
+
+  <footer class="colophon">
+    <p data-i18n="footer">Planet positions and times are calculated facts. What they mean is traditional astrology - a belief, not science, and never a guaranteed prediction. Your own choices matter more than any planet.</p>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>
