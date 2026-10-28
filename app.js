@@ -111,7 +111,12 @@ function params(extra) {
 // so the page also works when index.html is opened straight from disk.
 async function api(path, extra = {}) {
   await new Promise((r) => setTimeout(r, 20)); // let the "loading" message paint first
-  return K.reading(params(extra));
+  if (!window.K || !window.K.reading) {
+    throw new Error(lang === "si"
+      ? "ගණනය කිරීමේ ගොනු පූරණය නොවීය. index.html සමඟ එකම ෆෝල්ඩරයේ js සහ vendor ෆෝල්ඩර තිබිය යුතුයි."
+      : "The calculation files did not load. Keep index.html in the same folder as the js and vendor folders.");
+  }
+  return window.K.reading(params(extra));
 }
 
 /* ---------------- language ---------------- */
